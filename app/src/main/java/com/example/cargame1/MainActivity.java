@@ -2,11 +2,16 @@ package com.example.cargame1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -59,23 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     matrixImages[i][j].setImageResource(0);
                     if (j!=matrixCarObstacle[i].length -1){
                         if (matrixImages[i][j+1].getDrawable()==matrixImages[carIndex][5].getDrawable()) {
-                            carCrash++;
-                            if (carCrash==1) {
-                                main_IMG_heart3.setVisibility(View.INVISIBLE);
-                            }else {
-                                if (carCrash == 2) {
-                                    main_IMG_heart2.setVisibility(View.INVISIBLE);
-                                }else {
-                                    if (carCrash == 3) {
-                                        main_IMG_heart1.setVisibility(View.INVISIBLE);
-                                        TimeUnit.SECONDS.sleep(1);
-                                        carCrash = 0;
-                                        main_IMG_heart1.setVisibility(View.VISIBLE);
-                                        main_IMG_heart2.setVisibility(View.VISIBLE);
-                                        main_IMG_heart3.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                            }
+                            crash();
                         }else{
                             matrixImages[i][j + 1].setImageResource(R.drawable.car_obstacle);
                         }
@@ -91,6 +80,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void crash() {
+        vibrate();
+        toast("Get Crash!!");
+        carCrash++;
+        if (carCrash==1) {
+            main_IMG_heart3.setVisibility(View.INVISIBLE);
+        }else {
+            if (carCrash == 2) {
+                main_IMG_heart2.setVisibility(View.INVISIBLE);
+            }else {
+                if (carCrash == 3) {
+                    main_IMG_heart1.setVisibility(View.INVISIBLE);
+                    //TimeUnit.SECONDS.sleep(1);
+                    carCrash = 0;
+                    main_IMG_heart1.setVisibility(View.VISIBLE);
+                    main_IMG_heart2.setVisibility(View.VISIBLE);
+                    main_IMG_heart3.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    private void toast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void vibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         getMatrixFromViews();
 
         findViews();
+
 
         leftButton.setOnClickListener(view -> moveLeft());
         rightButton.setOnClickListener(view -> moveRight());
@@ -119,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
         if (carIndex != 2){
             carIndex++;
             matrixImages[carIndex-1][5].setImageResource(0);
+            if (matrixImages[carIndex][5].getDrawable()!=null) {
+                crash();
+            }
             matrixImages[carIndex][5].setImageResource(R.drawable.car);
         }
     }
@@ -127,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
         if (carIndex != 0){
             carIndex--;
             matrixImages[carIndex+1][5].setImageResource(0);
+            if (matrixImages[carIndex][5].getDrawable()!=null) {
+                crash();
+            }
             matrixImages[carIndex][5].setImageResource(R.drawable.car);
         }
     }
