@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:background="#5A93C1"
         tools:context=".MainActivity">
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="100dp"
@@ -109,8 +109,7 @@
                 android:id="@+id/index2_1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/car_obstacle" />
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/index2_2"
@@ -223,7 +222,7 @@
             android:text="@string/left" />
 
         <View
-            android:layout_width="122dp"
+            android:layout_width="152dp"
             android:layout_height="match_parent" />
 
         <Button
@@ -233,8 +232,6 @@
             android:backgroundTint="#A2930E"
             android:text="@string/right" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-
 
     </RelativeLayout>
 

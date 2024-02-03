@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private static final long DELAY = 1000;
     final Handler handler = new Handler();
     private ImageView[][] matrixImages = new ImageView[ROWS][COLS];
+    private int[][] matrixThingsOnScreen = new int[ROWS][COLS];
+    private  int carObstacle=1;
+    private  int coin=2;
 
     private ImageView main_IMG_heart1;
     private ImageView main_IMG_heart2;
@@ -49,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() throws InterruptedException {
         countUpdateUI++;
-        int[][] matrixCarObstacle = new int[ROWS][COLS];
-        for (int i = 0; i < matrixImages.length; i++) {
+        //int[][] matrixCarObstacle = new int[ROWS][COLS];
+        /*for (int i = 0; i < matrixImages.length; i++) {
             for (int j = 0; j < matrixImages[i].length; j++) {
                 if ( matrixImages[i][j].getDrawable() != null && matrixImages[i][j].getDrawable() != matrixImages[carIndex][5].getDrawable()) {
                     matrixCarObstacle[i][j] = 1;
@@ -71,13 +74,53 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+        }*/
+        for (int i = matrixImages.length-1; i >= 0; i--) {
+            for (int j = matrixImages[i].length - 1; j > 0; j--) {
+                if (matrixImages[i][j - 1].getDrawable() != null && matrixImages[i][j - 1].getDrawable() != matrixImages[carIndex][5].getDrawable()) {
+                    matrixImages[i][j - 1].setImageResource(0);
+                    if (matrixThingsOnScreen[i][j - 1] == carObstacle) {
+                        if(matrixImages[i][j]==matrixImages[carIndex][5]){
+                            crash();
+                            matrixImages[i][j].setImageResource(R.drawable.car);
+                        }
+                        else {
+                            matrixImages[i][j].setImageResource(R.drawable.car_obstacle);
+                            matrixThingsOnScreen[i][j] = carObstacle;
+                        }
+                        matrixThingsOnScreen[i][j-1] =0;
+                    }
+                    if (matrixThingsOnScreen[i][j - 1] == coin) {
+                        if(matrixImages[i][j]==matrixImages[carIndex][5]){
+                            matrixImages[i][j].setImageResource(R.drawable.car);
+                        }
+                        else {
+                            matrixImages[i][j].setImageResource(R.drawable.coin);
+                            matrixThingsOnScreen[i][j] = coin;
+                        }
+                        matrixThingsOnScreen[i][j-1] =0;
+                    }
+                }
+            }
         }
-        if (countUpdateUI == 3) {
-            Random random = new Random();
-            int randomNumber = random.nextInt(3);
-            matrixImages[randomNumber][0].setImageResource(R.drawable.car_obstacle);
-            countUpdateUI = 0;
+        for (int i = 0; i < matrixImages.length; i++) {
+            if (matrixImages[i][matrixImages[0].length-1].getDrawable()!=null){
+                matrixImages[i][matrixImages[0].length-1].setImageResource(0);
+                matrixThingsOnScreen[i][matrixImages[0].length-1] =0;
+            }
         }
+            if (countUpdateUI % 3 == 0) {
+                Random random = new Random();
+                int randomNumber = random.nextInt(3);
+                matrixImages[randomNumber][0].setImageResource(R.drawable.car_obstacle);
+                matrixThingsOnScreen[randomNumber][0] = carObstacle;
+            }
+            if (countUpdateUI % 7 == 0) {
+                Random random = new Random();
+                int randomNumber = random.nextInt(3);
+                matrixImages[randomNumber][0].setImageResource(R.drawable.coin);
+                matrixThingsOnScreen[randomNumber][0] = coin;
+            }
     }
 
     private void crash() {
@@ -118,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         getMatrixFromViews();
 
         findViews();
@@ -143,7 +185,9 @@ public class MainActivity extends AppCompatActivity {
             carIndex++;
             matrixImages[carIndex-1][5].setImageResource(0);
             if (matrixImages[carIndex][5].getDrawable()!=null) {
-                crash();
+                if (matrixThingsOnScreen[carIndex][5]==carObstacle) {
+                    crash();
+                }
             }
             matrixImages[carIndex][5].setImageResource(R.drawable.car);
         }
@@ -154,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
             carIndex--;
             matrixImages[carIndex+1][5].setImageResource(0);
             if (matrixImages[carIndex][5].getDrawable()!=null) {
-                crash();
+                if (matrixThingsOnScreen[carIndex][5]==carObstacle) {
+                    crash();
+                }
             }
             matrixImages[carIndex][5].setImageResource(R.drawable.car);
         }
