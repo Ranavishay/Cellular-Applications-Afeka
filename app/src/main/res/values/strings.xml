@@ -2,4 +2,9 @@
     <string name="app_name">CarGame1</string>
     <string name="left"><![CDATA[<-]]></string>
     <string name="right"><![CDATA[->]]></string>
+    <string name="back"><![CDATA[->]]></string>
+    <string name="first_button_Text">Start a game with buttons</string>
+    <string name="second_button_Text">Start a game with tilt</string>
+    <string name="third_button_Text">View scores</string>
+    <string name="slow_mode">Slow Mode</string>
 </resources>
