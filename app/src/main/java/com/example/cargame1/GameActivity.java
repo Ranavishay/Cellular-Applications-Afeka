@@ -21,8 +21,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
+import android.media.MediaPlayer;
+
 
 
 import android.hardware.Sensor;
@@ -68,6 +69,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         }
     };
     private static List<ScoreDate> tenScoresList = new ArrayList<>();
+    private MediaPlayer mediaCrash;
+
 
     private void updateUI() throws InterruptedException {
         countUpdateUI++;
@@ -123,6 +126,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void crash() {
+        if (mediaCrash != null) {
+            mediaCrash.start();
+        }
         vibrate();
         toast("Get Crash!!");
         carCrash++;
@@ -207,6 +213,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         Sensor gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
+
+        mediaCrash = MediaPlayer.create(this, R.raw.crash_sound);
     }
 
     @Override
@@ -240,6 +248,18 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         super.onPause();
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(runnable);
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorManager.unregisterListener(this);
+        if (mediaCrash != null) {
+            mediaCrash.release();
+            mediaCrash = null;
+        }
     }
 
 
@@ -314,7 +334,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private void saveScoreAndDate(int newScore) {
         Date currentDate = new Date();
         ScoreDate newScoreDate = new ScoreDate(newScore, currentDate);
-
+        loadScoresSharedPreferences();
         int index = 0;
         for (int i = 0; i < tenScoresList.size(); i++) {
             if (newScore > tenScoresList.get(i).getScore()) {
